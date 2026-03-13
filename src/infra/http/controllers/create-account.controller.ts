@@ -1,9 +1,14 @@
-import { ConflictException, UsePipes } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  UsePipes,
+} from "@nestjs/common";
 import { Body, Controller, HttpCode, Post } from "@nestjs/common";
-import { hash } from "bcryptjs";
 import { ZodValidationPipe } from "@infra/http/pipes/zod-validation-pipe";
-import { PrismaService } from "@infra/database/prisma/prisma.service";
 import z from "zod";
+import { RegisterStudentUseCase } from "@domain/forum/application/use-cases/register-student";
+import { StudentAlreadyExistError } from "@domain/forum/application/errors/student-already-exists-error";
+import { Public } from "@infra/auth/public";
 
 const createdAccountBodySchema = z.object({
   name: z.string(),
@@ -14,8 +19,9 @@ const createdAccountBodySchema = z.object({
 type CreatedAccountBodySchema = z.infer<typeof createdAccountBodySchema>;
 
 @Controller("/accounts")
+@Public()
 export class CreateAccountController {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private registerStudentUseCase: RegisterStudentUseCase) {}
 
   @Post()
   @HttpCode(201)
@@ -23,24 +29,21 @@ export class CreateAccountController {
   async handle(@Body() body: CreatedAccountBodySchema) {
     const { name, email, password } = body;
 
-    const userWithSameEmail = await this.prismaService.user.findUnique({
-      where: {
-        email,
-      },
+    const result = await this.registerStudentUseCase.execute({
+      name,
+      email,
+      password,
     });
 
-    if (userWithSameEmail) {
-      throw new ConflictException("User with same e-mail already exists");
+    if (result.isLeft()) {
+      const error = result.value;
+
+      switch (error.constructor) {
+        case StudentAlreadyExistError:
+          throw new ConflictException(error.message);
+        default:
+          throw new BadRequestException(error.message);
+      }
     }
-
-    const hashedPassword = await hash(password, 8);
-
-    await this.prismaService.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
-    });
   }
 }
