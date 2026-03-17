@@ -86,7 +86,6 @@ export class Question extends AggregateRoot<QuestionProps> {
   }
 
 
-
   static create(
     props: Optional<QuestionProps, "createdAt" | "slug" | "attachments">,
     id?: UniqueEntityID,
