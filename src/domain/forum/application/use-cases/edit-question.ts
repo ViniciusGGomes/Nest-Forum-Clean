@@ -3,10 +3,11 @@ import { Question } from "../../enterprise/entities/question";
 import { QuestionsRepository } from "../repositories/questions-repository";
 import { ResourceNotFoundError } from "@/core/erros/erros/resource-not-found-error";
 import { NotAllowedError } from "@/core/erros/erros/not-allowed-error";
-import { QuestionAttachmentRepository } from "../repositories/question-attachments-repository";
+import { QuestionAttachmentsRepository } from "../repositories/question-attachments-repository";
 import { QuestionAttachmentList } from "../../enterprise/entities/question-attachment-list";
 import { QuestionAttachment } from "../../enterprise/entities/question-attachment";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Injectable } from "@nestjs/common";
 
 interface EditQuestionUseCaseRequest {
   authorId: string;
@@ -21,10 +22,11 @@ type EditQuestionUseCaseResponse = Either<
   { question: Question }
 >;
 
+@Injectable()
 export class EditQuestionUseCase {
   constructor(
     private questionsRepository: QuestionsRepository,
-    private questionAttachmentsRepository: QuestionAttachmentRepository
+    private questionAttachmentsRepository: QuestionAttachmentsRepository,
   ) {}
 
   async execute({
@@ -48,7 +50,7 @@ export class EditQuestionUseCase {
       await this.questionAttachmentsRepository.findManyByQuestionId(questionId);
 
     const questionAttachmentList = new QuestionAttachmentList(
-      currentQuestionAttachments
+      currentQuestionAttachments,
     );
 
     /*Maneira aprendida em aula, porém não aplica o conceito de watched list */
@@ -62,7 +64,7 @@ export class EditQuestionUseCase {
     /*Maneira correta, aplicando o conceito de watched list*/
     const newList = attachmentsIds.map((attachmentId) => {
       const existing = currentQuestionAttachments.find(
-        (a) => a.attachmentId.toValue() === attachmentId
+        (a) => a.attachmentId.toValue() === attachmentId,
       );
 
       if (existing) return existing; // reaproveita o attachment antigo (com _id antigo)

@@ -7,6 +7,7 @@ import { AnswerAttachmentsRepository } from "../repositories/answer-attachments-
 import { AnswerAttachmentList } from "../../enterprise/entities/answer-attachment-list";
 import { AnswerAttachment } from "../../enterprise/entities/answer-attachment";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Injectable } from "@nestjs/common";
 
 interface EditAnswerUseCaseRequest {
   answerId: string;
@@ -20,10 +21,11 @@ type EditAnswerUseCaseResponse = Either<
   { answer: Answer }
 >;
 
+@Injectable()
 export class EditAnswerUseCase {
   constructor(
     private answersRepository: AnswersRepository,
-    private answerAttachmentsRepository: AnswerAttachmentsRepository
+    private answerAttachmentsRepository: AnswerAttachmentsRepository,
   ) {}
 
   async execute({
@@ -46,7 +48,7 @@ export class EditAnswerUseCase {
       await this.answerAttachmentsRepository.findManyByAnswerId(answerId);
 
     const answerAttachmentList = new AnswerAttachmentList(
-      currentAnswerAttachment
+      currentAnswerAttachment,
     );
 
     /*Maneira aprendida em aula, porém não aplica o conceito de watched list */
@@ -60,7 +62,7 @@ export class EditAnswerUseCase {
     /*Maneira correta, aplicando o conceito de watched list*/
     const newList = attachmentsIds.map((attachmentId) => {
       const existing = currentAnswerAttachment.find(
-        (a) => a.attachmentId.toValue() === attachmentId
+        (a) => a.attachmentId.toValue() === attachmentId,
       );
 
       if (existing) return existing; // reaproveita o attachment antigo (com _id antigo)
