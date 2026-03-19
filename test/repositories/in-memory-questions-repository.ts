@@ -1,6 +1,6 @@
 import { DomainEvents } from "@/core/events/domain-events";
 import { PaginationParams } from "@/core/repositories/pagination-params";
-import { QuestionAttachmentRepository } from "@/domain/forum/application/repositories/question-attachments-repository";
+import { QuestionAttachmentsRepository } from "@/domain/forum/application/repositories/question-attachments-repository";
 import { QuestionsRepository } from "@/domain/forum/application/repositories/questions-repository";
 import { Question } from "@/domain/forum/enterprise/entities/question";
 
@@ -8,7 +8,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
   public items: Question[] = [];
 
   constructor(
-    private questionAttachmentRepository: QuestionAttachmentRepository
+    private questionAttachmentRepository: QuestionAttachmentsRepository,
   ) {}
 
   async findById(id: string) {
@@ -42,7 +42,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
   async create(question: Question) {
     this.items.push(question);
 
-    DomainEvents.dispatchEventsForAggregate(question.id)
+    DomainEvents.dispatchEventsForAggregate(question.id);
   }
 
   async save(question: Question) {
@@ -50,7 +50,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
 
     this.items[itemIndex] = question;
 
-    DomainEvents.dispatchEventsForAggregate(question.id)
+    DomainEvents.dispatchEventsForAggregate(question.id);
   }
 
   async delete(question: Question) {
@@ -59,7 +59,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     this.items.splice(itemIndex, 1);
 
     this.questionAttachmentRepository.deleteManyByQuestionId(
-      question.id.toString()
+      question.id.toString(),
     );
   }
 }
