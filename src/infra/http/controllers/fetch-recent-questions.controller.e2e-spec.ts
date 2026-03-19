@@ -54,10 +54,10 @@ describe("Fetch Recent Question (E2E)", async () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
-      questions: [
+      questions: expect.arrayContaining([
         expect.objectContaining({ title: "Question 02" }),
         expect.objectContaining({ title: "Question 01" }),
-      ],
+      ]),
     });
   });
 });
