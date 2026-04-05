@@ -40,4 +40,16 @@ describe("Create an answer", () => {
       ],
     );
   });
+
+  it("should persist attachments when creating a new answer", async () => {
+    const result = await sut.execute({
+      authorId: "1",
+      questionId: "1",
+      content: "Conteúdo da resposta",
+      attachmentsIds: ["1", "2", "4"],
+    });
+
+    expect(result.isRight()).toBe(true);
+    expect(inMemoryAnswerAttachmentsRepository.items).toHaveLength(3);
+  });
 });
