@@ -8,6 +8,7 @@ import type { UserPayload } from "@infra/auth/jwt.strategy";
 const createQuestionBodySchema = z.object({
   title: z.string(),
   content: z.string(),
+  attachments: z.array(z.uuid()),
 });
 
 type CreateQuestionBodySchema = z.infer<typeof createQuestionBodySchema>;
@@ -22,18 +23,18 @@ export class CreateQuestionController {
     body: CreateQuestionBodySchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { title, content } = body;
+    const { title, content, attachments } = body;
     const userId = user.sub;
 
     const result = await this.createQuestionUseCase.execute({
       authorId: userId,
       title,
       content,
-      attachmentsIds: [],
+      attachmentsIds: attachments,
     });
 
-    if(result.isLeft()){
-      throw new BadRequestException()
+    if (result.isLeft()) {
+      throw new BadRequestException();
     }
   }
 }

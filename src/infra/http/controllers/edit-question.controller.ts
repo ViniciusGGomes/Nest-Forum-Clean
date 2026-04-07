@@ -15,6 +15,7 @@ import { CurrentUser } from "@infra/auth/current-user-decorator";
 const editQuestionBodySchema = z.object({
   title: z.string(),
   content: z.string(),
+  attachments: z.array(z.uuid()),
 });
 
 type EditQuestionBodySchema = z.infer<typeof editQuestionBodySchema>;
@@ -31,7 +32,7 @@ export class EditQuestionController {
     @CurrentUser() user: UserPayload,
     @Param("id") questionId: string,
   ) {
-    const { title, content } = body;
+    const { title, content, attachments } = body;
     const userId = user.sub;
 
     const result = await this.editQuestionUseCase.execute({
@@ -39,11 +40,11 @@ export class EditQuestionController {
       title,
       content,
       questionId,
-      attachmentsIds: [],
+      attachmentsIds: attachments,
     });
 
     if (result.isLeft()) {
-      throw new BadRequestException()
+      throw new BadRequestException();
     }
   }
 }

@@ -13,6 +13,7 @@ import { ZodValidationPipe } from "../pipes/zod-validation-pipe";
 
 const answerQuestionBodySchema = z.object({
   content: z.string(),
+  attachments: z.array(z.uuid()),
 });
 
 type AnswerQuestionBodySchema = z.infer<typeof answerQuestionBodySchema>;
@@ -28,14 +29,14 @@ export class AnswerQuestionController {
     @CurrentUser() user: UserPayload,
     @Param("questionId") questionId: string,
   ) {
-    const { content } = body;
+    const { content, attachments } = body;
 
     const userId = user.sub;
 
     const result = await this.answerQuestionUseCase.execute({
       authorId: userId,
       content,
-      attachmentsIds: [],
+      attachmentsIds: attachments,
       questionId,
     });
 
