@@ -3,17 +3,26 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { FetchRecentQuestionsUseCase } from "./fetch-recent-questions";
 import { makeQuestion } from "test/factory/make-question";
 import { InMemoryQuestionAttachmentsRepository } from "test/repositories/in-memory-question-attachments-repository";
+import { InMemoryStudentsRepository } from "test/repositories/in-memory-students-repository";
+import { InMemoryAttachmentsRepository } from "test/repositories/in-memory-attachments-repository";
 
+let inMemoryStudentsRepository: InMemoryStudentsRepository;
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository;
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
 let inMemoryQuestionaAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let sut: FetchRecentQuestionsUseCase;
 
 describe("Fetch recent questions", () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository();
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository();
+
     inMemoryQuestionaAttachmentsRepository =
       new InMemoryQuestionAttachmentsRepository();
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionaAttachmentsRepository,
+      inMemoryStudentsRepository,
+      inMemoryAttachmentsRepository,
     );
     sut = new FetchRecentQuestionsUseCase(inMemoryQuestionsRepository);
   });
