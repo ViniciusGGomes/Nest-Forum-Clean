@@ -27,7 +27,7 @@ describe("Authenticate Student", () => {
       password: await fakeHasher.hash("123456"),
     });
 
-    console.log(student.name, student.email, student.password);
+    // console.log(student.name, student.email, student.password);
 
     inMemoryStudentsRepository.items.push(student);
 
