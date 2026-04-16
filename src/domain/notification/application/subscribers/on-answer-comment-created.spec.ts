@@ -16,10 +16,15 @@ import { waitFor } from "test/utils/wait-for";
 import { InMemoryQuestionsRepository } from "test/repositories/in-memory-questions-repository";
 import { InMemoryQuestionAttachmentsRepository } from "test/repositories/in-memory-question-attachments-repository";
 import { makeQuestion } from "test/factory/make-question";
+import { InMemoryStudentsRepository } from "test/repositories/in-memory-students-repository";
+import { InMemoryAttachmentsRepository } from "test/repositories/in-memory-attachments-repository";
+
+let inMemoryStudentsRepository: InMemoryStudentsRepository;
 
 let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository;
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
 
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository;
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let inMemoryQuestionRepository: InMemoryQuestionsRepository;
 
@@ -36,19 +41,26 @@ let sendNotificationExecuteSpy: MockInstance<
 
 describe("On Answer Comment Created", () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository();
+
     inMemoryAnswerAttachmentsRepository =
       new InMemoryAnswerAttachmentsRepository();
     inMemoryAnswersRepository = new InMemoryAnswersRepository(
       inMemoryAnswerAttachmentsRepository,
     );
 
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository();
     inMemoryQuestionAttachmentsRepository =
       new InMemoryQuestionAttachmentsRepository();
     inMemoryQuestionRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionAttachmentsRepository,
+      inMemoryStudentsRepository,
+      inMemoryAttachmentsRepository,
     );
 
-    inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository();
+    inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository(
+      inMemoryStudentsRepository,
+    );
 
     inMemoryNotificationsRepository = new InMemoryNotificationsRepository();
     sendNotificationUseCase = new SendNotificationUseCase(
