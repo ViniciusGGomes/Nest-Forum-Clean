@@ -13,7 +13,7 @@ import { EnvModule } from "./env/env.module";
     }),
     AuthModule,
     HttpModule,
-    EnvModule
+    EnvModule,
   ],
 })
 export class AppModule {}
