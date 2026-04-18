@@ -26,7 +26,7 @@ Nesta fase, as tecnologias externas (círculos azul e verde) foram plugadas na a
 * **Framework (NestJS):** Utilizado primariamente como um contêiner de Injeção de Dependências (DI) e roteador HTTP, mantendo as camadas desacopladas através de módulos.
 * **Camada HTTP (Controllers & Presenters):** Responsável por receber as requisições e formatar os dados de saída das entidades ricas para objetos literais (JSON) que o frontend compreende.
 * **Banco de Dados & Mappers:** Integração com **PostgreSQL** utilizando o **Prisma ORM**. A persistência é feita através do padrão *Repository*, e os *Mappers* fazem a tradução bidirecional entre as entidades do Prisma e as entidades do Domínio.
-* **Cache:** Implementação de uma camada de cache de alta performance utilizando **Redis** para otimizar consultas frequentes (ex: detalhes de uma pergunta).
+* **Cache & Monitoramento (Redis):** Implementação de uma camada de cache de alta performance utilizando **Redis** para otimizar consultas frequentes. Durante o desenvolvimento, o **RedisInsight** foi utilizado como ferramenta visual para monitorar, debugar e gerenciar a criação e expiração das chaves de cache em tempo real.
 * **Storage:** Upload de anexos integrado ao **Cloudflare R2** (API compatível com Amazon S3).
 * **Segurança e Autenticação:** Implementação de JWT (JSON Web Tokens) e hash de senhas utilizando `bcrypt` e `passport`.
 
