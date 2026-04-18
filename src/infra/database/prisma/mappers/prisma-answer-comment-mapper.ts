@@ -7,7 +7,6 @@ export class PrismaAnswerCommentMapper {
     if (!raw.answerId) {
       throw new Error("Invalid comment type");
     }
-
     return AnswerComment.create(
       {
         authorId: new UniqueEntityID(raw.authorId),
